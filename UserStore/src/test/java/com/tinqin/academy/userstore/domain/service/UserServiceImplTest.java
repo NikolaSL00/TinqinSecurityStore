@@ -11,7 +11,9 @@ import com.tinqin.academy.userstore.view.DTOs.UserDTOResponse;
 import io.vavr.control.Either;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -21,21 +23,18 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import org.junit.jupiter.api.Assertions;
 
-
-@SpringBootTest
-@Import(PasswordEncoderConfig.class)
+@ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-
     private UserService toTest;
     @Mock
     private UserRepository mockUserRepository;
     @Mock
     private UserToUserResponseDTOMapper userToUserResponseDTOMapper;
-    @Autowired
+    @Mock
     private PasswordEncoder passwordEncoder;
 
 
@@ -141,6 +140,9 @@ class UserServiceImplTest {
                 .username("nikola00")
                 .build();
 
+        when(passwordEncoder.encode(anyString()))
+                .thenReturn("topsecret");
+
 
         when(mockUserRepository.findByUsername(testUserEntity.getUsername())).
                 thenReturn(Optional.empty());
@@ -177,14 +179,6 @@ class UserServiceImplTest {
     @Test
     void crateUserShouldNotCreateUserAndShouldReturnError() {
         // arrange
-        UserDTOResponse testResponse = UserDTOResponse.builder()
-                .username("nikola00")
-                .firstName("Nikola")
-                .lastName("Slavchev")
-                .age(22)
-                .password("topsecret")
-                .build();
-
         User testUserEntity = User.builder()
                 .username("nikola00")
                 .firstName("Nikola")
