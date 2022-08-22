@@ -145,7 +145,6 @@ class UserServiceImplTest {
         when(mockUserRepository.findByUsername(testUserEntity.getUsername())).
                 thenReturn(Optional.empty());
 
-        // the saved obj is null !?!?!?
         when(mockUserRepository.save(any())).
                 thenReturn(testUserEntity);
 
@@ -173,5 +172,46 @@ class UserServiceImplTest {
                 actualRes.get().getLastName());
 
         assertEquals(testResponse.getPassword(), actualRes.get().getPassword());
+    }
+
+    @Test
+    void crateUserShouldNotCreateUserAndShouldReturnError() {
+        // arrange
+        UserDTOResponse testResponse = UserDTOResponse.builder()
+                .username("nikola00")
+                .firstName("Nikola")
+                .lastName("Slavchev")
+                .age(22)
+                .password("topsecret")
+                .build();
+
+        User testUserEntity = User.builder()
+                .username("nikola00")
+                .firstName("Nikola")
+                .lastName("Slavchev")
+                .age(22)
+                .password("topsecret")
+                .build();
+
+        UserDTOCreateRequest testRequest = UserDTOCreateRequest.builder()
+                .firstName("Nikola")
+                .lastName("Slavchev")
+                .age(22)
+                .password("topsecret")
+                .username("nikola00")
+                .build();
+
+
+        when(mockUserRepository.findByUsername(testUserEntity.getUsername())).
+                thenReturn(Optional.of(testUserEntity));
+
+        // act
+        Either<UserCreationFailureException, UserDTOResponse> actualRes = toTest.createUser(testRequest);
+
+        // assert
+        assertEquals(
+                actualRes.getLeft().getMessage(), "User with username '"
+                        + testUserEntity.getUsername()
+                        + "' already exists.");
     }
 }
