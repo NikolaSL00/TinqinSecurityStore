@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Either<UsernameNotFoundException, UserDTOResponse> getByUsername(String username) {
         Optional<User> optUser = userRepository.findByUsername(username);
-//        .orElseThrow()
 
         if (optUser.isEmpty()) {
             return Either.left(new UsernameNotFoundException(
@@ -58,14 +57,14 @@ public class UserServiceImpl implements UserService {
                     + "' already exists."));
         }
 
-        return Either.right(
-                userToUserResponseDTOMapper.map(
-                        userRepository.save(User.builder()
-                                .username(userDTOCreateRequest.getUsername())
-                                .password(passwordEncoder.encode(userDTOCreateRequest.getPassword()))
-                                .firstName(userDTOCreateRequest.getFirstName())
-                                .lastName(userDTOCreateRequest.getLastName())
-                                .age(userDTOCreateRequest.getAge())
-                                .build())));
+        User savedUser = userRepository.save(User.builder()
+                .username(userDTOCreateRequest.getUsername())
+                .password(passwordEncoder.encode(userDTOCreateRequest.getPassword()))
+                .firstName(userDTOCreateRequest.getFirstName())
+                .lastName(userDTOCreateRequest.getLastName())
+                .age(userDTOCreateRequest.getAge())
+                .build());
+
+        return Either.right(userToUserResponseDTOMapper.map(savedUser));
     }
 }

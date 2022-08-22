@@ -1,5 +1,6 @@
 package com.tinqin.academy.userstore.view.DTOs;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.NotEmpty;
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
+@Builder
 public class UserDTOCreateRequest {
     @NotEmpty
     @NotNull
